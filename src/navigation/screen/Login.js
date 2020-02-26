@@ -8,21 +8,31 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import LinearGradient from 'react-native-linear-gradient';
 import facebook from '../../asset/facebook.png';
 import google from '../../asset/google.png';
 import twitter from '../../asset/twitter.png';
+import Actionaccount from '../../action/action';
 
-export default class Login extends Component {
+class Login extends Component {
+  static hiddenLogin = {
+    headerShown: false,
+  };
   state = {
     user: '',
     password: '',
   };
   getLogin = () => {
     const {user, password} = this.state;
+
     if (user === '' || password === '')
       return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
+    this.props.navigation.navigate('Listfriend');
+    const payload = {user};
+    this.props.takeUser(payload);
+    console.log(user);
   };
   render() {
     const {user, password} = this.state;
@@ -47,7 +57,7 @@ export default class Login extends Component {
             onChangeText={text => this.setState({password: text})}
             value={password}
             secureTextEntry
-            minLength={8}
+            minLength={6}
           />
         </View>
 
@@ -68,7 +78,8 @@ export default class Login extends Component {
             <Text style={style.textUnderline}>Forgot password ? </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Register')}>
             <Text style={style.textUnderline}>Register </Text>
           </TouchableOpacity>
         </View>
@@ -82,6 +93,16 @@ export default class Login extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  user: state.account.user,
+});
+
+const mapDispatchToProps = {
+  takeUser: Actionaccount.takeUser,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 const style = StyleSheet.create({
   contain: {
