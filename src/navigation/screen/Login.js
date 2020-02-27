@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Image,
   Alert,
+  ActivityIndicator,
+  ActivityIndicatorBase,
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -15,32 +17,53 @@ import facebook from '../../asset/facebook.png';
 import google from '../../asset/google.png';
 import twitter from '../../asset/twitter.png';
 import Actionaccount from '../../action/action';
+import {login} from '../../api/Users';
 
 class Login extends Component {
   static hiddenLogin = {
     headerShown: false,
   };
-  state = {
-    user: '',
-    password: '',
-  };
-  getLogin = () => {
-    const {user, password} = this.state;
 
-    if (user === '' || password === '')
-      return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
-    this.props.navigation.navigate('Listfriend');
-    const payload = {user};
-    this.props.takeUser(payload);
-    console.log(user);
+  state = {
+    email: '',
+    password: '',
+    loading: false,
   };
+
+  getLogin = async () => {
+    const {user, password, loading} = this.state;
+
+    try {
+      this.setState({loading: true});
+
+      if (user === '' || password === '')
+        return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
+
+      const fetchedUser = await login(user, password);
+
+      this.setState({loading: false});
+      this.props.takeUser({user: fetchedUser});
+
+      Alert.alert('Thông báo', 'Đăng nhập thành công', [
+        {
+          text: 'OK',
+          onPress: () => this.props.navigation.navigate('Listfriend'),
+        },
+      ]);
+    } catch (error) {
+      this.setState({loading: false});
+      Alert.alert('Thông báo', 'Đăng nhập thất bại', [{text: 'OK'}]);
+    }
+  };
+
   render() {
-    const {user, password} = this.state;
+    const {user, password, loading} = this.state;
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
         style={style.contain}>
         <Text style={style.textMain}>Login</Text>
+        {loading && <ActivityIndicator size="large" />}
         <View style={style.box}>
           <TextInput
             placeholder="Username "
@@ -49,7 +72,6 @@ class Login extends Component {
             value={user}
           />
         </View>
-
         <View style={style.box}>
           <TextInput
             placeholder="Password "
@@ -60,7 +82,6 @@ class Login extends Component {
             minLength={6}
           />
         </View>
-
         <View style={style.box1}>
           <TouchableOpacity>
             <Image source={facebook} style={style.image} />
@@ -72,7 +93,6 @@ class Login extends Component {
             <Image source={google} style={style.image} />
           </TouchableOpacity>
         </View>
-
         <View style={style.box1}>
           <TouchableOpacity>
             <Text style={style.textUnderline}>Forgot password ? </Text>
@@ -83,7 +103,6 @@ class Login extends Component {
             <Text style={style.textUnderline}>Register </Text>
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity onPress={() => this.getLogin()}>
           <LinearGradient colors={['#bee6f7', '#faf5ca']} style={style.buttom}>
             <Text style={style.textbuttom}>Login</Text>

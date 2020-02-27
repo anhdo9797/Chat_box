@@ -1,5 +1,9 @@
 const accountState = {
-  user: '',
+  user: {
+    uid: undefined,
+    email: undefined,
+    password: undefined,
+  },
 };
 
 const accountReducer = (state = accountState, action) => {
@@ -12,9 +16,7 @@ const accountReducer = (state = accountState, action) => {
       };
 
     default:
-      return {
-        state,
-      };
+      return state;
   }
 };
 

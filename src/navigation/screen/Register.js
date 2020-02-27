@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
+import {register} from '../../api/Users';
 
 export default class Register extends Component {
   state = {
     name: '',
     password: '',
     password2: '',
-    numberPhone: 0,
+    numberPhone: '',
   };
   getMessenger = () => {
     const {name, password, password2} = this.state;
@@ -23,7 +24,11 @@ export default class Register extends Component {
       Alert.alert('Mật khẩu không đúng');
       return this.setState({password: '', password2: ''});
     }
+    register(name, password).then(() =>
+      this.setState({name: '', password: '', password2: '', numberPhone: ''}),
+    );
   };
+
   render() {
     const {name, password, password2, numberPhone} = this.state;
     return (

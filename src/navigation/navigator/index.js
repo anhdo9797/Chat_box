@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../screen/Login';
 import Register from '../screen/Register';
 import ListFriend from '../screen/Listfriend';
+import Loading from '../screen/Loading';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ export default class Mystack extends React.Component {
           <Stack.Screen
             name="Listfriend"
             component={ListFriend}
+            options={Login.hiddenLogin}
+          />
+          <Stack.Screen
+            name="Loading"
+            component={Loading}
             options={Login.hiddenLogin}
           />
         </Stack.Navigator>

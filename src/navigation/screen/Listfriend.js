@@ -16,13 +16,15 @@ class ListFriend extends Component {
     const {user} = this.props;
     console.log(user);
   };
+
   render() {
-    const {user} = this.props;
+    const {uid, email} = this.props.user;
+
     return (
       <View style={seclect.main}>
         <View style={seclect.box1}>
           <View style={seclect.textMain}>
-            <Text style={seclect.textButtom}>Xin chào: {user}</Text>
+            <Text style={seclect.textButtom}>Xin chào: {email}</Text>
           </View>
           <View style={seclect.input}>
             <TextInput placeholder="Nhập tên bạn muốn tìm" />
@@ -108,6 +110,7 @@ const seclect = StyleSheet.create({
   },
   textMain: {
     flex: 2,
+    top: 30,
   },
   image: {
     width: 20,
