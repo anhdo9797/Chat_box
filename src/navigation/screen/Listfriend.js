@@ -20,6 +20,8 @@ class ListFriend extends Component {
   state = {
     search: '',
     loading: false,
+    arar: [],
+    data: [],
   };
 
   getSearch = () => {
@@ -33,6 +35,14 @@ class ListFriend extends Component {
       .then(() => this.setState({loading: false, search: ''}))
       .catch(e => Alert.alert(e.message));
   };
+
+  async getData() {
+    const {uid} = this.props.user;
+    const ary = await listFriend(uid);
+    console.log('data===== ', Promise.all(ary));
+
+    return Promise.all(ary);
+  }
 
   render() {
     const {email, uid} = this.props.user;
@@ -62,8 +72,9 @@ class ListFriend extends Component {
           colors={['#e0e0e0', '#eeeeee', '#636161']}
           style={seclect.box2}>
           {loading ? <ActivityIndicator size="large" /> : null}
+
           <FlatList
-            data={listFriend(uid).array}
+            data={this.getData()}
             renderItem={item => {
               <View>
                 <Text>{item.name}</Text>
@@ -76,7 +87,7 @@ class ListFriend extends Component {
           <TouchableOpacity>
             <Text style={seclect.textButtom}>Lịch sử</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.getData()}>
             <Text style={seclect.textButtom}>Thêm bạn</Text>
           </TouchableOpacity>
         </View>

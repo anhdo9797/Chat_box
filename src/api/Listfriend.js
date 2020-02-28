@@ -1,9 +1,9 @@
-import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import React, {Component} from 'react';
-import {View, FlatList, Text} from 'react-native';
 
 export async function listFriend(uid) {
+  // const {
+  //   data: [],
+  // } = this.state;
   try {
     const array = [];
     await database()
@@ -14,25 +14,11 @@ export async function listFriend(uid) {
           key: snapshot.key,
         });
       });
-
+    // await this.setState({data: array});
     console.log('===array', array);
+    // await array;
   } catch (e) {
     console.log('=== AddFriend error: ', e);
     throw e;
   }
 }
-
-// const flatList = uid => {
-//   return (
-//     <FlatList
-//       data={listFriend(uid).array}
-//       renderItem={item => {
-//         <View>
-//           <Text>{item.name}</Text>
-//         </View>;
-//       }}
-//     />
-//   );
-// };
-
-// export default flatList;
