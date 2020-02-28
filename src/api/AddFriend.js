@@ -15,7 +15,7 @@ export async function addFriend(uid, email = '') {
         .ref(`/users/${uid}/friend`)
         .push({email});
     } else {
-      throw Error('Email ko tồn tại');
+      throw Error('Email không tồn tại');
     }
   } catch (e) {
     console.log('=== AddFriend error: ', e);

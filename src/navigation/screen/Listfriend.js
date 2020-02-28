@@ -6,31 +6,37 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
 
 import Actionaccount from '../../action/action';
 import LinearGradient from 'react-native-linear-gradient';
 import {addFriend} from '../../api/AddFriend';
+import {listFriend} from '../../api/Listfriend';
 
 class ListFriend extends Component {
   state = {
-    seatch: '',
+    search: '',
+    loading: false,
   };
 
   getSearch = () => {
     const {user} = this.props;
-    const {search} = this.state;
+    const {search, loading} = this.state;
     console.log(user);
+    this.setState({loading: true});
     const {uid} = this.props.user;
     addFriend(uid, search)
       .then(() => Alert.alert('them thành công'))
+      .then(() => this.setState({loading: false, search: ''}))
       .catch(e => Alert.alert(e.message));
   };
 
   render() {
     const {email, uid} = this.props.user;
-    const {search} = this.state;
+    const {search, loading} = this.state;
 
     return (
       <View style={seclect.main}>
@@ -40,19 +46,31 @@ class ListFriend extends Component {
           </View>
           <View style={seclect.input}>
             <TextInput
-              placeholder="Nhập tên bạn muốn tìm"
+              style={{width: 250}}
+              placeholder="Nhập tên bạn muốn thêm"
               onChangeText={text => this.setState({search: text})}
+              value={search}
             />
 
             <TouchableOpacity onPress={() => this.getSearch()}>
-              <Text style={seclect.text}>Tìm</Text>
+              <Text style={seclect.text}>Thêm</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <LinearGradient
           colors={['#e0e0e0', '#eeeeee', '#636161']}
-          style={seclect.box2}></LinearGradient>
+          style={seclect.box2}>
+          {loading ? <ActivityIndicator size="large" /> : null}
+          <FlatList
+            data={listFriend(uid).array}
+            renderItem={item => {
+              <View>
+                <Text>{item.name}</Text>
+              </View>;
+            }}
+          />
+        </LinearGradient>
 
         <View style={seclect.box3}>
           <TouchableOpacity>
