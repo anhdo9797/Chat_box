@@ -1077,6 +1077,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-6.3.4.tgz#76dc4679d00f33ee2c3157ed5ac95fa5af5f1b2f"
   integrity sha512-ytr3VyZ/CRCbYl1a28LCB8znv3l9ftxqkC7RJ0k0GZ+zfmMwjFy1GBYxz7F9XDHdUkpEXJSsXd4FiVwbNX1YSQ==
 
+"@react-native-firebase/in-app-messaging@^6.3.4":
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/in-app-messaging/-/in-app-messaging-6.3.4.tgz#3a293cb5fe8a20814bc8c9f4057a10909154880f"
+  integrity sha512-iXu64qW0g1AFSq8PomwW8L9eQeXxaN9q41DAW4R4gJ8Vz80UxhmrmGA3wKiqOAHrC+rTGnNCIdnaKybjD5+xVg==
+
 "@react-navigation/core@^5.1.6":
   version "5.1.6"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.1.6.tgz#cefaad9618e17ff743d9a26aeee4da53c4a96b92"

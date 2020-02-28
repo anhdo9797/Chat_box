@@ -3,6 +3,7 @@ import {Provider} from 'react-redux';
 
 import Mystack from './src/navigation/navigator';
 import mainStore from './src/redux/store';
+import Login from './src/navigation/screen/Login';
 
 const store = mainStore();
 

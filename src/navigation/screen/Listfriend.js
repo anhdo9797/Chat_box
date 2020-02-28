@@ -5,20 +5,32 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 
 import Actionaccount from '../../action/action';
 import LinearGradient from 'react-native-linear-gradient';
+import {addFriend} from '../../api/AddFriend';
 
 class ListFriend extends Component {
+  state = {
+    seatch: '',
+  };
+
   getSearch = () => {
     const {user} = this.props;
+    const {search} = this.state;
     console.log(user);
+    const {uid} = this.props.user;
+    addFriend(uid, search)
+      .then(() => Alert.alert('them thành công'))
+      .catch(e => Alert.alert(e.message));
   };
 
   render() {
-    const {uid, email} = this.props.user;
+    const {email, uid} = this.props.user;
+    const {search} = this.state;
 
     return (
       <View style={seclect.main}>
@@ -27,7 +39,10 @@ class ListFriend extends Component {
             <Text style={seclect.textButtom}>Xin chào: {email}</Text>
           </View>
           <View style={seclect.input}>
-            <TextInput placeholder="Nhập tên bạn muốn tìm" />
+            <TextInput
+              placeholder="Nhập tên bạn muốn tìm"
+              onChangeText={text => this.setState({search: text})}
+            />
 
             <TouchableOpacity onPress={() => this.getSearch()}>
               <Text style={seclect.text}>Tìm</Text>

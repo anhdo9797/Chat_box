@@ -1,6 +1,5 @@
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import {Alert} from 'react-native';
 
 export async function register(email, password) {
   try {
@@ -21,12 +20,8 @@ export async function login(email, password) {
     const ref = database().ref(`/users/${uid}`);
     const snapshot = await ref.once('value');
     const user = snapshot.val();
-
-    console.log('=== LOGIN: ', user);
     return user;
   } catch (e) {
-    console.log('=== LOGIN: ', e);
-
     throw e;
   }
 }

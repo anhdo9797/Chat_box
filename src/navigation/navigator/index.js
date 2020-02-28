@@ -30,11 +30,6 @@ export default class Mystack extends React.Component {
             component={ListFriend}
             options={Login.hiddenLogin}
           />
-          <Stack.Screen
-            name="Loading"
-            component={Loading}
-            options={Login.hiddenLogin}
-          />
         </Stack.Navigator>
       </NavigationContainer>
     );
