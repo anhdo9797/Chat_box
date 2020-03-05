@@ -1,11 +1,8 @@
 import database from '@react-native-firebase/database';
 
-export async function listFriend(uid) {
-  // const {
-  //   data: [],
-  // } = this.state;
+export async function getListFriend(uid) {
+  const array = [];
   try {
-    const array = [];
     await database()
       .ref(`/users/${uid}/friend`)
       .on('child_added', snapshot => {
@@ -14,9 +11,8 @@ export async function listFriend(uid) {
           key: snapshot.key,
         });
       });
-    // await this.setState({data: array});
-    console.log('===array', array);
-    // await array;
+
+    return array;
   } catch (e) {
     console.log('=== AddFriend error: ', e);
     throw e;

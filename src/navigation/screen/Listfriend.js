@@ -14,7 +14,7 @@ import {connect} from 'react-redux';
 import Actionaccount from '../../action/action';
 import LinearGradient from 'react-native-linear-gradient';
 import {addFriend} from '../../api/AddFriend';
-import {listFriend} from '../../api/Listfriend';
+import {getListFriend} from '../../api/Listfriend';
 
 class ListFriend extends Component {
   state = {
@@ -24,29 +24,50 @@ class ListFriend extends Component {
     data: [],
   };
 
-  getSearch = () => {
+  componentDidMount() {
+    this.getData();
+  }
+
+  getSearch = async () => {
     const {user} = this.props;
     const {search, loading} = this.state;
     console.log(user);
     this.setState({loading: true});
     const {uid} = this.props.user;
-    addFriend(uid, search)
-      .then(() => Alert.alert('them thành công'))
-      .then(() => this.setState({loading: false, search: ''}))
-      .catch(e => Alert.alert(e.message));
+
+    try {
+      await addFriend(uid, search);
+      Alert.alert('them thành công');
+      this.setState({loading: false, search: ''});
+    } catch (e) {
+      Alert.alert(e.message);
+      this.setState({loading: false, search: ''});
+    }
+  };
+  getData = async () => {
+    const {uid} = this.props.user;
+    const listFriend = await getListFriend(uid);
+    this.setState({data: listFriend});
+    console.log(this.state.data);
   };
 
-  async getData() {
-    const {uid} = this.props.user;
-    const ary = await listFriend(uid);
-    console.log('data===== ', Promise.all(ary));
-
-    return Promise.all(ary);
-  }
+  renderItem = ({item, index}) => (
+    <View style={seclect.item}>
+      <TouchableOpacity
+        onPress={() =>
+          this.props.navigation.navigate('Chatbox', {
+            name: item.name,
+            item,
+          })
+        }>
+        <Text style={{fontSize: 30}}>{item.name}</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   render() {
     const {email, uid} = this.props.user;
-    const {search, loading} = this.state;
+    const {search, loading, data} = this.state;
 
     return (
       <View style={seclect.main}>
@@ -62,7 +83,7 @@ class ListFriend extends Component {
               value={search}
             />
 
-            <TouchableOpacity onPress={() => this.getSearch()}>
+            <TouchableOpacity onPress={this.getSearch}>
               <Text style={seclect.text}>Thêm</Text>
             </TouchableOpacity>
           </View>
@@ -72,14 +93,11 @@ class ListFriend extends Component {
           colors={['#e0e0e0', '#eeeeee', '#636161']}
           style={seclect.box2}>
           {loading ? <ActivityIndicator size="large" /> : null}
-
           <FlatList
-            data={this.getData()}
-            renderItem={item => {
-              <View>
-                <Text>{item.name}</Text>
-              </View>;
-            }}
+            data={data}
+            extraData={data}
+            keyExtractor={(item, index) => item.key}
+            renderItem={this.renderItem}
           />
         </LinearGradient>
 
@@ -87,7 +105,7 @@ class ListFriend extends Component {
           <TouchableOpacity>
             <Text style={seclect.textButtom}>Lịch sử</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.getData()}>
+          <TouchableOpacity>
             <Text style={seclect.textButtom}>Thêm bạn</Text>
           </TouchableOpacity>
         </View>
@@ -165,6 +183,12 @@ const seclect = StyleSheet.create({
     fontSize: 30,
     backgroundColor: 150,
     padding: 5,
+    borderRadius: 10,
+  },
+  item: {
+    padding: 10,
+    margin: 20,
+    backgroundColor: '#bdbdbd',
     borderRadius: 10,
   },
 });

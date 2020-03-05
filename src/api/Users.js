@@ -20,6 +20,7 @@ export async function login(email, password) {
     const ref = database().ref(`/users/${uid}`);
     const snapshot = await ref.once('value');
     const user = snapshot.val();
+
     return user;
   } catch (e) {
     throw e;

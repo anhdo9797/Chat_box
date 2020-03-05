@@ -25,8 +25,8 @@ class Login extends Component {
   };
 
   state = {
-    email: '',
-    password: '',
+    user: 'Anhdo97@gmail.com',
+    password: '123123',
     loading: false,
   };
 
