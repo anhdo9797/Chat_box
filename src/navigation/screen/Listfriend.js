@@ -52,7 +52,9 @@ class ListFriend extends Component {
   };
 
   renderItem = ({item, index}) => (
-    <View style={seclect.item}>
+    <LinearGradient
+      colors={['#e0e0e0', '#a8a0a0', '#607d8b']}
+      style={seclect.item}>
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate('Chatbox', {
@@ -60,9 +62,9 @@ class ListFriend extends Component {
             item,
           })
         }>
-        <Text style={{fontSize: 30}}>{item.name}</Text>
+        <Text style={{fontSize: 20, margin: 13}}>{item.name}</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 
   render() {

@@ -12,10 +12,11 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import Actionaccount from '../../action/action';
 import LinearGradient from 'react-native-linear-gradient';
 import {getUIDfriend, addChatroom} from '../../api/Chatroom';
+import {onMesssageUpdated, sendMessage} from '../../api/chat';
 
 class ChatBox extends Component {
   state = {
-    messenger: '',
+    messenger: [],
     showMessenger: '',
     friend: this.props.route.params.name,
     getMessage: [],
@@ -29,14 +30,18 @@ class ChatBox extends Component {
 
   getChatRoom = async () => {
     const {uid} = this.props.user;
-    const getUID = await getUIDfriend(this.state.friend);
-    this.setState({uidFriend: getUID});
+    const uidFriend = await getUIDfriend(this.state.friend);
+    this.setState({uidFriend});
     console.log('uidFriend==', this.state.uidFriend);
-    await addChatroom(
-      this.getNameRoom(this.state.uidFriend),
-      uid,
-      this.state.uidFriend,
-    );
+    const roomName = this.getNameRoom(uidFriend);
+
+    await addChatroom(roomName, uid, this.state.uidFriend);
+
+    onMesssageUpdated(roomName, message => {
+      this.setState(prew => ({
+        messenger: GiftedChat.append(prew.messenger, [message]),
+      }));
+    });
   };
 
   getNameRoom = uidFriend => {
@@ -48,8 +53,14 @@ class ChatBox extends Component {
     return uidFriend + '_' + uid;
   };
 
+  sendMessages = messages => {
+    sendMessage(this.getNameRoom(this.state.uidFriend), messages);
+  };
+
   render() {
-    const {messenger, showMessenger, friend} = this.state;
+    const {friend} = this.state;
+    const {uid, email} = this.props.user;
+
     return (
       <View style={seclect.main}>
         <View style={seclect.box1}>
@@ -58,24 +69,14 @@ class ChatBox extends Component {
           </View>
         </View>
 
-        <LinearGradient
-          colors={['#e0e0e0', '#eeeeee', '#636161']}
-          style={seclect.box2}></LinearGradient>
-
-        <View style={seclect.box3}>
-          <View style={seclect.input}>
-            <TextInput
-              style={{width: 250}}
-              placeholder="Nhập tin nhắn"
-              onChangeText={text => this.setState({messenger: text})}
-              value={messenger}
-            />
-
-            <TouchableOpacity onPress={() => this.sendMessenger()}>
-              <Text style={seclect.text}>Gửi</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <GiftedChat
+          messages={this.state.messenger}
+          onSend={this.sendMessages}
+          user={{
+            _id: uid,
+            name: email,
+          }}
+        />
       </View>
     );
   }
@@ -93,7 +94,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(ChatBox);
 
 const seclect = StyleSheet.create({
   box1: {
-    flex: 2,
+    width: '100%',
+    height: '10%',
     backgroundColor: '#757575',
     borderBottomWidth: 4,
     borderBottomColor: '#a1887f',
