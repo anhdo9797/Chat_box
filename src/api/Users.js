@@ -1,12 +1,12 @@
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-export async function register(email, password) {
+export async function register(email, password, phoneNumber, name) {
   try {
     await auth().createUserWithEmailAndPassword(email, password);
     const uid = auth().currentUser.uid;
     const ref = database().ref(`/users/${uid}`);
-    await ref.set({uid, email, password});
+    await ref.set({ uid, email, password, phoneNumber });
   } catch (e) {
     console.log(e);
     throw e;

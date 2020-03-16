@@ -16,13 +16,3 @@ export default class App extends Component {
     );
   }
 }
-
-// const App: () => React$Node = () => {
-//   return (
-//     <Provider store={store}>
-//       <Mystack />
-//     </Provider>
-//   );
-// };
-
-// export default App;

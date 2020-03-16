@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -6,10 +6,16 @@ import {
   TextInput,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
-
 import LinearGradient from 'react-native-linear-gradient';
-import {register} from '../../api/Users';
+
+import { register } from '../../api/Users';
+import upAvatar from '../../api/avatar';
+import pickAndUpload, {
+  pickImageFromDevice,
+  uploadImage,
+} from '../../api/upload';
 
 export default class Register extends Component {
   state = {
@@ -17,69 +23,85 @@ export default class Register extends Component {
     password: '',
     password2: '',
     numberPhone: '',
+    avatar: '',
   };
+
   getMessenger = () => {
-    const {name, password, password2} = this.state;
+    const { name, password, password2, numberPhone } = this.state;
     if (password2 !== password) {
       Alert.alert('Mật khẩu không đúng');
-      return this.setState({password: '', password2: ''});
+      return this.setState({ password: '', password2: '' });
     }
-    register(name, password).then(() =>
-      this.setState({name: '', password: '', password2: '', numberPhone: ''}),
+    register(name, password, numberPhone).then(() =>
+      this.setState({ name: '', password: '', password2: '', numberPhone: '' }),
     );
   };
 
+  upload = async () => {
+    const source = await pickImageFromDevice();
+    // console.log('========== PICKUP RES', source);
+    // this.setState({
+    //   avatar: { uri: 'data:image/jpeg;base64,' + source.data },
+    // });
+    // console.log(this.state.avatar);
+    const avatar = await uploadImage(source.path, source.data, source.fileName);
+    this.setState({ avatar });
+  };
+
   render() {
-    const {name, password, password2, numberPhone} = this.state;
+    const { name, password, password2, numberPhone, avatar } = this.state;
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
         style={style.contain}>
-        <Text style={style.textMain}>Register</Text>
+        <Text style={style.textMain}>ĐĂNG KÍ TÀI KHOẢN</Text>
         <View style={style.box}>
           <TextInput
             placeholder="Tên đăng nhập "
             style={style.text}
-            onChangeText={text => this.setState({name: text})}
+            onChangeText={text => this.setState({ name: text })}
             value={name}
           />
         </View>
-
         <View style={style.box}>
           <TextInput
             placeholder="Mật khẩu "
             style={style.text}
-            onChangeText={text => this.setState({password: text})}
+            onChangeText={text => this.setState({ password: text })}
             value={password}
             secureTextEntry
             minLength={8}
           />
         </View>
-
         <View style={style.box}>
           <TextInput
             placeholder="Nhập lại mật khẩu "
             style={style.text}
-            onChangeText={text => this.setState({password2: text})}
+            onChangeText={text => this.setState({ password2: text })}
             value={password2}
             secureTextEntry
             minLength={8}
           />
         </View>
-
         <View style={style.box}>
           <TextInput
             placeholder="Số điện thoại"
             style={style.text}
-            onChangeText={text => this.setState({numberPhone: text})}
+            onChangeText={text => this.setState({ numberPhone: text })}
             value={numberPhone}
             keyboardType="number-pad"
           />
         </View>
 
+        <TouchableOpacity onPress={this.upload}>
+          <Text>AVATAR </Text>
+        </TouchableOpacity>
+
+        <Image source={{ uri: avatar }} style={{ width: 40, height: 40 }} />
+
         <TouchableOpacity onPress={() => this.getMessenger()}>
           <LinearGradient colors={['#bee6f7', '#faf5ca']} style={style.buttom}>
-            <Text style={style.textbuttom}>Register</Text>
+            <Text style={style.textbuttom}>Đăng kí</Text>
           </LinearGradient>
         </TouchableOpacity>
       </LinearGradient>

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -10,14 +10,15 @@ import {
   ActivityIndicator,
   ActivityIndicatorBase,
 } from 'react-native';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import LinearGradient from 'react-native-linear-gradient';
 import facebook from '../../asset/facebook.png';
 import google from '../../asset/google.png';
 import twitter from '../../asset/twitter.png';
 import Actionaccount from '../../action/action';
-import {login} from '../../api/Users';
+import { login } from '../../api/Users';
+import { checkProfile, getProFile } from '../../api/updateProfile';
 
 class Login extends Component {
   static hiddenLogin = {
@@ -25,39 +26,53 @@ class Login extends Component {
   };
 
   state = {
-    user: 'Anhdo97@gmail.com',
+    email: 'Anhdo97@gmail.com',
     password: '123123',
     loading: false,
   };
 
   getLogin = async () => {
-    const {user, password, loading} = this.state;
+    const { email, password, loading } = this.state;
 
     try {
-      this.setState({loading: true});
+      this.setState({ loading: true });
 
-      if (user === '' || password === '')
+      if (email === '' || password === '') {
         return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
+      } else {
+        const fetchedUser = await login(email, password);
 
-      const fetchedUser = await login(user, password);
+        this.setState({ loading: false });
+        this.props.takeUser({ user: fetchedUser });
 
-      this.setState({loading: false});
-      this.props.takeUser({user: fetchedUser});
+        const checkPro = await checkProfile(this.props.user.uid);
 
-      Alert.alert('Thông báo', 'Đăng nhập thành công', [
-        {
-          text: 'OK',
-          onPress: () => this.props.navigation.navigate('Listfriend'),
-        },
-      ]);
+        if (checkPro != null) {
+          return Alert.alert('Thông báo', 'Đăng nhập thành công', [
+            {
+              text: 'OK',
+              onPress: () => this.props.navigation.navigate('Listfriend'),
+            },
+          ]);
+        }
+        if (checkPro == null) {
+          return Alert.alert('Thông báo', 'Vui lòng cập nhật thông tin', [
+            {
+              text: 'OK',
+              onPress: () => this.props.navigation.navigate('UpdateProfile'),
+            },
+          ]);
+        }
+      }
     } catch (error) {
-      this.setState({loading: false});
-      Alert.alert('Thông báo', 'Đăng nhập thất bại', [{text: 'OK'}]);
+      this.setState({ loading: false });
+      Alert.alert('Thông báo', 'Đăng nhập thất bại', [{ text: 'OK' }]);
+      console.log(error);
     }
   };
 
   render() {
-    const {user, password, loading} = this.state;
+    const { email, password, loading } = this.state;
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
@@ -66,17 +81,17 @@ class Login extends Component {
         {loading && <ActivityIndicator size="large" />}
         <View style={style.box}>
           <TextInput
-            placeholder="Username "
+            placeholder="Email "
             style={style.text}
-            onChangeText={text => this.setState({user: text})}
-            value={user}
+            onChangeText={text => this.setState({ email: text })}
+            value={email}
           />
         </View>
         <View style={style.box}>
           <TextInput
             placeholder="Password "
             style={style.text}
-            onChangeText={text => this.setState({password: text})}
+            onChangeText={text => this.setState({ password: text })}
             value={password}
             secureTextEntry
             minLength={6}
@@ -103,7 +118,7 @@ class Login extends Component {
             <Text style={style.textUnderline}>Register </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => this.getLogin()}>
+        <TouchableOpacity onPress={this.getLogin}>
           <LinearGradient colors={['#bee6f7', '#faf5ca']} style={style.buttom}>
             <Text style={style.textbuttom}>Login</Text>
           </LinearGradient>
@@ -115,10 +130,12 @@ class Login extends Component {
 
 const mapStateToProps = state => ({
   user: state.account.user,
+  profile: state.account.profile,
 });
 
 const mapDispatchToProps = {
   takeUser: Actionaccount.takeUser,
+  takeProfile: Actionaccount.takeProfile,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

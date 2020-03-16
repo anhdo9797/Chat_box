@@ -1,6 +1,7 @@
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
+
 export async function getUIDfriend(email = '') {
   try {
     const snapshot = await database()
@@ -9,7 +10,6 @@ export async function getUIDfriend(email = '') {
       .equalTo(email)
       .once('value');
     const uid = Object.keys(snapshot.val())[0];
-    console.log('uid=====', uid);
     return uid;
   } catch (e) {
     console.log('=== ADDCHATBOX error: ', e);
@@ -19,23 +19,20 @@ export async function getUIDfriend(email = '') {
 
 export const addChatroom = async (nameRoom, uid1, uid2) => {
   try {
-    const checkNameroom = await database()
-      .ref('Chat_room')
-      .orderByChild('name')
-      .equalTo(nameRoom)
+    const checkRoom = await database()
+      .ref('ChatRoom')
+      .child(nameRoom)
       .once('value');
 
-    if (checkNameroom.val() === null) {
+    if (checkRoom.val() === null)
       await database()
-        .ref('Chat_room')
+        .ref('ChatRoom')
+        .child(nameRoom)
+        .child('member')
         .push({
-          name: nameRoom,
-          member: {
-            uid1,
-            uid2,
-          },
+          [uid1]: true,
+          [uid2]: true,
         });
-    }
   } catch (error) {
     console.log(error);
   }
