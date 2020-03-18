@@ -26,3 +26,8 @@ export async function login(email, password) {
     throw e;
   }
 }
+
+export const onLogout = async () => {
+  const logout = auth().signOut();
+  return logout;
+};

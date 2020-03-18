@@ -11,11 +11,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 
 import { register } from '../../api/Users';
-import upAvatar from '../../api/avatar';
-import pickAndUpload, {
-  pickImageFromDevice,
-  uploadImage,
-} from '../../api/upload';
+import { pickImageFromDevice, uploadImage } from '../../api/upload';
 
 export default class Register extends Component {
   state = {
@@ -32,8 +28,20 @@ export default class Register extends Component {
       Alert.alert('Mật khẩu không đúng');
       return this.setState({ password: '', password2: '' });
     }
-    register(name, password, numberPhone).then(() =>
-      this.setState({ name: '', password: '', password2: '', numberPhone: '' }),
+    register(name, password, numberPhone).then(
+      () =>
+        this.setState({
+          name: '',
+          password: '',
+          password2: '',
+          numberPhone: '',
+        }),
+      Alert.alert('Thông báo', 'Đăng kí thành công', [
+        {
+          text: 'OK',
+          onPress: () => this.props.navigation.navigate('Login'),
+        },
+      ]),
     );
   };
 
@@ -81,15 +89,6 @@ export default class Register extends Component {
             value={password2}
             secureTextEntry
             minLength={8}
-          />
-        </View>
-        <View style={style.box}>
-          <TextInput
-            placeholder="Số điện thoại"
-            style={style.text}
-            onChangeText={text => this.setState({ numberPhone: text })}
-            value={numberPhone}
-            keyboardType="number-pad"
           />
         </View>
 

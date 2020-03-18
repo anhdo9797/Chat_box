@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import database from '@react-native-firebase/database';
 
 export const sendMessage = (nameRoom, messages) => {
@@ -53,7 +53,7 @@ export const onMesssageUpdated = async (nameRoom, callback = () => {}) => {
       let user = rawData.user;
       const createdAt = new Date(rawData.timestamp);
 
-      let message = {...rawData, user, _id, createdAt};
+      let message = { ...rawData, user, _id, createdAt };
 
       callback(message);
     });

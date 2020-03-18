@@ -1,46 +1,46 @@
 import database from '@react-native-firebase/database';
+import { checkProfile } from './updateProfile';
 import { getUIDfriend } from './Chatroom';
-import { checkProfile, getProFile } from './updateProfile';
 
-const arrayBig = [];
-
-export async function getListFriend(uid) {
-  const array = [];
-  const array2 = [];
+export const getListFriend = async (uid, callback = () => {}) => {
   try {
-    await database()
+    database()
       .ref(`/users/${uid}/friend`)
-      .on('child_added', snapshot => {
-        console.log('snapshot', snapshot.val());
-        array2.push({
-          name: snapshot.val().email,
-          key: snapshot.key,
-        });
+      .on('child_added', async snapshot => {
+        const friend = await parse(snapshot);
+        callback(friend);
       });
-
-    console.log('aray2', array2);
-    console.log('aray', array);
-
-    return array2;
   } catch (e) {
     console.log('=== AddFriend error: ', e);
     throw e;
   }
-}
+};
 
-const getProFileFriend = async email => {
-  console.log('====start');
+const parse = async snapshot => {
+  const profile = await getProfileFriend(snapshot.val().email);
 
-  const uidFriend = await getUIDfriend(email);
-  console.log('uidFriend', uidFriend);
+  const result = {
+    displayName: profile.displayName,
+    avatar: profile.avatar,
+    phoneNumber: profile.phoneNumber,
+    name: snapshot.val().email,
+    key: snapshot.key,
+  };
 
-  const keyProfile = checkProfile(uidFriend);
-  console.log('keyProfile', keyProfile);
+  return result;
+};
 
-  const proFilefriend = getProFile(uidFriend, Object.keys(keyProfile));
-  console.log('proFilefriend', proFilefriend);
+export const getProfileFriend = async email => {
+  /*lấy profile(avatar, displayName) của bạn bè  */
+  const uid = await getUIDfriend(email);
+  const profile = await checkProfile(uid);
+  console.log('profile', profile);
 
-  console.log('====end');
+  return profile;
+};
 
-  return proFilefriend;
+export const off = uid => {
+  database()
+    .ref(`/users/${uid}/friend`)
+    .off('child_added');
 };

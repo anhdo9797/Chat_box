@@ -26,8 +26,8 @@ class Login extends Component {
   };
 
   state = {
-    email: 'Anhdo97@gmail.com',
-    password: '123123',
+    email: '',
+    password: '',
     loading: false,
   };
 
@@ -38,6 +38,7 @@ class Login extends Component {
       this.setState({ loading: true });
 
       if (email === '' || password === '') {
+        this.setState({ loading: false });
         return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
       } else {
         const fetchedUser = await login(email, password);

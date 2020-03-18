@@ -35,14 +35,10 @@ export const uploadImage = async (filePath, fileBase64, fileName) => {
   try {
     const storageRef = Storage().ref(`avatar/${fileName}`);
 
-    // console.log('start 1: ');
-
     const res = await storageRef.putString(
       fileBase64,
       Storage.StringFormat.BASE64,
     );
-
-    // console.log('end 1: ', res);
 
     const downloadUrl = await storageRef.getDownloadURL();
     console.log('get downloadUrl: ', downloadUrl);

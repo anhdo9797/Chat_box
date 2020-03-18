@@ -15,9 +15,11 @@ import { connect } from 'react-redux';
 import Actionaccount from '../../action/action';
 import LinearGradient from 'react-native-linear-gradient';
 import { addFriend } from '../../api/AddFriend';
-import { getListFriend } from '../../api/Listfriend';
-import { checkProfile, getProFile } from '../../api/updateProfile';
-import { getUIDfriend } from '../../api/Chatroom';
+import { getListFriend, off } from '../../api/Listfriend';
+import { checkProfile } from '../../api/updateProfile';
+import { menuR } from '../../components/menu';
+
+const DATA = [{ displayName: 'anhdo', name: 'andho@gmail' }];
 
 class ListFriend extends Component {
   state = {
@@ -26,6 +28,7 @@ class ListFriend extends Component {
     arar: [],
     data: [],
     avatar: '',
+    menu: false,
   };
 
   componentDidMount() {
@@ -51,43 +54,48 @@ class ListFriend extends Component {
 
   getData = async () => {
     const { uid } = this.props.user;
+    /* lấy list bạn bè */
+    getListFriend(uid, friend => {
+      this.setState(prev => ({ data: [...prev.data, friend], loading: false }));
+    });
 
-    /* lấy danh sách bạn bè */
-    const listFriend = await getListFriend(uid);
-    this.setState({ data: listFriend, loading: false });
+    this.setState({ loading: false });
 
+    /* lấy của profile user */
+    const getProfile = await checkProfile(this.props.user.uid);
 
-    console.log('dataa', this.state.data);
+    /* set profile vao reducer */
 
-    /* lấy key của profile user */
-    const keyProfile = await checkProfile(this.props.user.uid);
+    this.props.takeProfile({ profile: getProfile });
 
-    /* lấy profile user */
-
-    const fetchProfie = await getProFile(uid, Object.keys(keyProfile));
-    this.props.takeProfile({ profile: fetchProfie });
-
-    this.setState({ avatar: fetchProfie.avatar });
+    this.setState({ avatar: getProfile.avatar });
   };
 
   renderItem = ({ item, index }) => (
     <LinearGradient
-      colors={['#e0e0e0', '#a8a0a0', '#ffccbc']}
+      colors={['#e0e0e0', '#eceff1', '#c2c4c4']}
       style={seclect.item}>
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate('Chatbox', {
             name: item.name,
             item,
+            displayName: item.displayName,
+            avatar: item.avatar,
           })
         }>
-        <Image
-          source={{ uri: item.avatar }}
-          style={{ width: '20%', height: '10%' }}
-        />
-        <Text style={{ fontSize: 20, margin: 13 }}>{item.displayName}</Text>
-
-        <Text style={{ fontSize: 15, margin: 13 }}>{item.name}</Text>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View>
+            <Image
+              source={{ uri: item.avatar }}
+              style={{ width: 50, height: 50, margin: 5, borderRadius: 25 }}
+            />
+          </View>
+          <View>
+            <Text style={{ fontSize: 20, margin: 5 }}>{item.displayName}</Text>
+            <Text style={{ fontSize: 15, margin: 5 }}>{item.name}</Text>
+          </View>
+        </View>
       </TouchableOpacity>
     </LinearGradient>
   );
@@ -110,6 +118,7 @@ class ListFriend extends Component {
 
   render() {
     const { search, loading, data } = this.state;
+    const { displayName, phoneNumber } = this.props.profile;
 
     return (
       <View style={seclect.main}>
@@ -124,15 +133,20 @@ class ListFriend extends Component {
               }}>
               {this.loadingAvatar()}
             </View>
+
             <View style={{ flex: 1 }}>
-              <Text style={seclect.textButtom}>
-                {this.props.profile.displayName}
-              </Text>
-              <Text style={seclect.textSmall}>
-                {this.props.profile.phoneNumber}
-              </Text>
+              <Text style={seclect.textButtom}>{displayName}</Text>
+              <Text style={seclect.textSmall}>{phoneNumber}</Text>
               <Text style={seclect.textSmall}>{this.props.user.email}</Text>
             </View>
+            <TouchableOpacity
+              style={{ marginRight: '5%', marginTop: '2%' }}
+              onPress={() => this.setState({ menu: !this.state.menu })}>
+              <Image
+                source={require('../../asset/menu.png')}
+                style={{ width: 20, height: 30 }}
+              />
+            </TouchableOpacity>
           </View>
 
           <View style={seclect.input}>
@@ -153,15 +167,19 @@ class ListFriend extends Component {
           colors={['#e0e0e0', '#eeeeee', '#636161']}
           style={seclect.box2}>
           {loading ? <ActivityIndicator size="large" /> : null}
+          {this.state.menu ? menuR(this.props.navigation) : null}
           <FlatList
             data={data}
-            extraData={data}
+            extraData={{ data }}
             keyExtractor={(item, index) => item.key}
             renderItem={this.renderItem}
           />
         </LinearGradient>
       </View>
     );
+  }
+  componentWillUnmount() {
+    off(this.props.user.uid);
   }
 }
 
@@ -240,5 +258,7 @@ const seclect = StyleSheet.create({
     margin: 20,
     backgroundColor: '#d7ccc8',
     borderRadius: 10,
+    borderBottomColor: '#8a8a8a',
+    borderBottomWidth: 4,
   },
 });

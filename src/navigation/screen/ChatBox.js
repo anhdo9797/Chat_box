@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { connect } from 'react-redux';
 import { GiftedChat } from 'react-native-gifted-chat';
 
@@ -11,12 +18,16 @@ import {
   offMesssageUpdated,
 } from '../../api/chat';
 
+import { onLogout } from '../../api/Users';
+import { menuR } from '../../components/menu';
+
 class ChatBox extends Component {
   state = {
     messenger: [],
     friend: this.props.route.params.name,
     getMessage: [],
     uidFriend: '',
+    menu: false,
   };
 
   componentDidMount() {
@@ -51,25 +62,50 @@ class ChatBox extends Component {
   };
 
   render() {
-    const { friend } = this.state;
-    const { uid, email } = this.props.user;
+    const { uid } = this.props.user;
+    const { menu } = this.state;
+    const { avatar, displayName } = this.props.profile;
 
     return (
       <View style={seclect.main}>
         <View style={seclect.box1}>
-          <View style={seclect.textMain}>
-            <Text style={seclect.textButtom}> {friend}</Text>
+          <Image
+            source={{ uri: this.props.route.params.avatar }}
+            style={{
+              width: '15%',
+              height: '60%',
+              margin: 10,
+              borderRadius: 50,
+            }}
+          />
+          <View>
+            <Text style={seclect.textButtom}>
+              {this.props.route.params.displayName}
+            </Text>
+            <Text style={seclect.text}>{this.props.route.params.name}</Text>
           </View>
-        </View>
 
-        <GiftedChat
-          messages={this.state.messenger}
-          onSend={this.sendMessages}
-          user={{
-            _id: uid,
-            name: email,
-          }}
-        />
+          <TouchableOpacity
+            style={{ marginLeft: '30%', marginTop: '6%' }}
+            onPress={() => this.setState({ menu: !menu })}>
+            <Image
+              source={require('../../asset/menu.png')}
+              style={{ width: 20, height: 30 }}
+            />
+          </TouchableOpacity>
+        </View>
+        {menu ? menuR(this.props.navigation) : null}
+        <View style={{ flex: 6 }}>
+          <GiftedChat
+            messages={this.state.messenger}
+            onSend={this.sendMessages}
+            user={{
+              _id: uid,
+              name: displayName,
+              avatar,
+            }}
+          />
+        </View>
       </View>
     );
   }
@@ -81,6 +117,8 @@ class ChatBox extends Component {
 
 const mapStateToProps = state => ({
   user: state.account.user,
+
+  profile: state.account.profile,
 });
 
 const mapDispatchToProps = {
@@ -91,37 +129,21 @@ export default connect(mapStateToProps, mapDispatchToProps)(ChatBox);
 
 const seclect = StyleSheet.create({
   box1: {
-    width: '100%',
-    height: '10%',
     backgroundColor: '#757575',
     borderBottomWidth: 4,
     borderBottomColor: '#a1887f',
     borderBottomEndRadius: 70,
     borderTopColor: 'red',
-  },
-  box2: {
-    flex: 8,
-    backgroundColor: 'blue',
-    borderRadius: 10,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  box3: {
-    flex: 1,
-    backgroundColor: '#424242',
-    borderTopStartRadius: 70,
-    borderTopColor: '#a1887f',
-    borderTopWidth: 4,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    flex: 1,
   },
+
   main: {
     flex: 1,
     backgroundColor: '#a1887f',
   },
   textButtom: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -139,17 +161,14 @@ const seclect = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textMain: {
-    flex: 2,
     top: 30,
+    flexDirection: 'row',
+    flex: 1,
   },
-  image: {
-    width: 20,
-    height: 20,
-    marginHorizontal: 30,
-  },
+
   text: {
-    fontSize: 30,
-    backgroundColor: 150,
+    fontSize: 15,
+    backgroundColor: 10,
     padding: 5,
     borderRadius: 10,
   },
