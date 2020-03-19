@@ -17,8 +17,6 @@ import {
   onMesssageUpdated,
   offMesssageUpdated,
 } from '../../api/chat';
-
-import { onLogout } from '../../api/Users';
 import { menuR } from '../../components/menu';
 
 class ChatBox extends Component {

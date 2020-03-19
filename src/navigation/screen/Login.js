@@ -32,7 +32,7 @@ class Login extends Component {
   };
 
   getLogin = async () => {
-    const { email, password, loading } = this.state;
+    const { email, password } = this.state;
 
     try {
       this.setState({ loading: true });

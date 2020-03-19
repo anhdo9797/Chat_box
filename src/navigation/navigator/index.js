@@ -42,7 +42,6 @@ export default class Mystack extends React.Component {
             component={updateprofile}
             options={Login.hiddenLogin}
           />
-         
         </Stack.Navigator>
       </NavigationContainer>
     );
