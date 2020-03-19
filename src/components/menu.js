@@ -1,12 +1,5 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { onLogout } from '../api/Users';
 
 const navigate = navigation => {
@@ -19,12 +12,13 @@ const navigate = navigation => {
 };
 
 const logOut = navigation => {
+  const reset = '';
   Alert.alert('Thông báo', 'Bạn có muốn đăng xuất', [
     {
       text: 'OK',
       onPress: () =>
         onLogout()
-          .then(() => navigation.navigate('Login'))
+          .then(() => navigation.navigate('Login', { reset }))
           .catch(e => console.log(e)),
     },
   ]);

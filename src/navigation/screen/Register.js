@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -20,49 +21,54 @@ export default class Register extends Component {
     password2: '',
     numberPhone: '',
     avatar: '',
+    loading: false,
   };
 
   getMessenger = () => {
+    this.setState({
+      loading: true,
+    });
     const { name, password, password2, numberPhone } = this.state;
     if (password2 !== password) {
       Alert.alert('Mật khẩu không đúng');
-      return this.setState({ password: '', password2: '' });
+      return this.setState({ password: '', password2: '', loading: false });
     }
-    register(name, password, numberPhone).then(
-      () =>
-        this.setState({
-          name: '',
-          password: '',
-          password2: '',
-          numberPhone: '',
-        }),
+    register(name, password).then(() =>
       Alert.alert('Thông báo', 'Đăng kí thành công', [
         {
           text: 'OK',
-          onPress: () => this.props.navigation.navigate('Login'),
+          onPress: () => {
+            this.props.navigation.navigate('Login', {
+              name,
+            });
+            this.setState({
+              loading: false,
+              name: '',
+              password: '',
+              password2: '',
+              numberPhone: '',
+            });
+          },
         },
       ]),
     );
   };
 
-  upload = async () => {
-    const source = await pickImageFromDevice();
-    // console.log('========== PICKUP RES', source);
-    // this.setState({
-    //   avatar: { uri: 'data:image/jpeg;base64,' + source.data },
-    // });
-    // console.log(this.state.avatar);
-    const avatar = await uploadImage(source.path, source.data, source.fileName);
-    this.setState({ avatar });
-  };
-
   render() {
-    const { name, password, password2, numberPhone, avatar } = this.state;
+    const {
+      name,
+      password,
+      password2,
+
+      avatar,
+      loading,
+    } = this.state;
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
         style={style.contain}>
         <Text style={style.textMain}>ĐĂNG KÍ TÀI KHOẢN</Text>
+        {loading && <ActivityIndicator size="large" />}
         <View style={style.box}>
           <TextInput
             placeholder="Tên đăng nhập "
@@ -91,10 +97,6 @@ export default class Register extends Component {
             minLength={8}
           />
         </View>
-
-        <TouchableOpacity onPress={this.upload}>
-          <Text>AVATAR </Text>
-        </TouchableOpacity>
 
         <Image source={{ uri: avatar }} style={{ width: 40, height: 40 }} />
 

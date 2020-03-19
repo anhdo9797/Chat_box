@@ -26,8 +26,8 @@ class Login extends Component {
   };
 
   state = {
-    email: '',
-    password: '',
+    email: this.props.route.params?.name || this.props.route.params?.reset,
+    password: this.props.route.params?.reset,
     loading: false,
   };
 
@@ -74,6 +74,7 @@ class Login extends Component {
 
   render() {
     const { email, password, loading } = this.state;
+
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
