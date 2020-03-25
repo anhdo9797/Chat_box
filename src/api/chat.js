@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import database from '@react-native-firebase/database';
 
 export const sendMessage = (nameRoom, messages) => {
@@ -10,41 +9,14 @@ export const sendMessage = (nameRoom, messages) => {
     };
 
     database()
-      .ref(`/ChatRoom/${nameRoom}/Messages`)
+      .ref(`/chatroom/${nameRoom}/Messages`)
       .push(message);
   });
 };
 
-export const onMessage = async (nameRoom, messages) => {
-  try {
-    let messages = [];
-
-    console.log(`/ChatRoom/${nameRoom}/Messages`);
-
-    await database()
-      .ref(`/ChatRoom/${nameRoom}/Messages`)
-      .limitToLast(20)
-      .on('child_added', snapshot => {
-        let user = snapshot.val().user;
-        user._id = user.uid;
-        user.name = user.email;
-
-        messages.push({
-          text: snapshot.val().text,
-          user,
-          createdAt: snapshot.val().createdAt,
-        });
-      });
-
-    return messages;
-  } catch (error) {
-    console.log('error', error);
-  }
-};
-
-export const onMesssageUpdated = async (nameRoom, callback = () => {}) => {
+export const onMesssageUpdated = async (nameRoom, callback) => {
   database()
-    .ref(`/ChatRoom/${nameRoom}/Messages`)
+    .ref(`/chatroom/${nameRoom}/Messages`)
     .limitToLast(20)
     .on('child_added', snapshot => {
       let rawData = snapshot.val();
@@ -61,6 +33,6 @@ export const onMesssageUpdated = async (nameRoom, callback = () => {}) => {
 
 export const offMesssageUpdated = nameRoom => {
   database()
-    .ref(`/ChatRoom/${nameRoom}/Messages`)
-    .off('child_added');
+    .ref(`/chatroom/${nameRoom}/Messages`)
+    .off();
 };

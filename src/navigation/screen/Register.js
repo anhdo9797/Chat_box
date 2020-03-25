@@ -12,14 +12,12 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 
 import { register } from '../../api/Users';
-import { pickImageFromDevice, uploadImage } from '../../api/upload';
 
 export default class Register extends Component {
   state = {
     name: '',
     password: '',
     password2: '',
-    numberPhone: '',
     avatar: '',
     loading: false,
   };
@@ -28,30 +26,45 @@ export default class Register extends Component {
     this.setState({
       loading: true,
     });
-    const { name, password, password2, numberPhone } = this.state;
+    const { name, password, password2 } = this.state;
+
     if (password2 !== password) {
-      Alert.alert('Mật khẩu không đúng');
+      Alert.alert('Đăng kí không thành công', 'Mật khẩu không đúng');
       return this.setState({ password: '', password2: '', loading: false });
     }
-    register(name, password).then(() =>
-      Alert.alert('Thông báo', 'Đăng kí thành công', [
-        {
-          text: 'OK',
-          onPress: () => {
-            this.props.navigation.navigate('Login', {
-              name,
-            });
-            this.setState({
-              loading: false,
-              name: '',
-              password: '',
-              password2: '',
-              numberPhone: '',
-            });
+
+    register(name, password)
+      .then(() =>
+        Alert.alert('Đăng kí thành công', 'nhấn ok để đăng nhập', [
+          {
+            text: 'OK',
+            onPress: () => {
+              this.props.navigation.navigate('Login', {
+               name,
+              });
+              this.setState({
+                loading: false,
+                password: '',
+                password2: '',
+              });
+            },
           },
-        },
-      ]),
-    );
+        ]),
+      )
+      .catch(() => {
+        Alert.alert(
+          'Đăng kí không thành công',
+          'Vui lòng kiểm tra lại địa chỉ Email',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                this.setState({ loading: false, password: '', password2: '' });
+              },
+            },
+          ],
+        );
+      });
   };
 
   render() {
@@ -100,10 +113,10 @@ export default class Register extends Component {
 
         <Image source={{ uri: avatar }} style={{ width: 40, height: 40 }} />
 
-        <TouchableOpacity onPress={() => this.getMessenger()}>
-          <LinearGradient colors={['#bee6f7', '#faf5ca']} style={style.buttom}>
-            <Text style={style.textbuttom}>Đăng kí</Text>
-          </LinearGradient>
+        <TouchableOpacity
+          onPress={() => this.getMessenger()}
+          style={style.buttom}>
+          <Text style={style.textbuttom}>Đăng kí</Text>
         </TouchableOpacity>
       </LinearGradient>
     );
@@ -118,28 +131,29 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   textMain: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: 'bold',
     color: 'white',
-    bottom: 50,
+    bottom: '10%',
   },
   box: {
     height: 50,
-    width: 300,
+    width: '77%',
     backgroundColor: '#e3f2fd',
-    margin: 20,
     borderRadius: 10,
     padding: 5,
+    margin: 20,
   },
   box1: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   text: {
     fontSize: 16,
   },
   textUnderline: {
     fontSize: 18,
-    margin: 12,
+    margin: '6%',
     padding: 10,
     textDecorationLine: 'underline',
   },
@@ -149,8 +163,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttom: {
-    top: 40,
-    padding: 15,
+    top: '10%',
     borderRadius: 10,
     color: '#757575',
     fontWeight: 'bold',
@@ -158,10 +171,15 @@ const style = StyleSheet.create({
     borderBottomWidth: 3,
     borderRightWidth: 2,
     borderRightColor: '#ffcc80',
+    width: '30%',
+    height: '8%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fffacf',
   },
   image: {
     width: 50,
     height: 50,
-    marginHorizontal: 30,
+    marginHorizontal: '5%',
   },
 });

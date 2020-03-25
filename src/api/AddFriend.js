@@ -18,7 +18,7 @@ export async function addFriend(uid, email = '') {
     if (isExisted && checkFriend.val() === null) {
       await database()
         .ref(`/users/${uid}/friend`)
-        .push({email});
+        .push({ email });
     } else {
       throw Error('Email không tồn tại, hoặc đã kết bạn trước đó');
     }

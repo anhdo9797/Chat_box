@@ -87,12 +87,14 @@ class ListFriend extends Component {
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <View>
             <Image
-              source={{ uri: item.avatar }}
+              source={{ uri: item.avatar || '' }}
               style={{ width: 50, height: 50, margin: 5, borderRadius: 25 }}
             />
           </View>
           <View>
-            <Text style={{ fontSize: 20, margin: 5 }}>{item.displayName}</Text>
+            <Text style={{ fontSize: 20, margin: 5 }}>
+              {item.displayName || 'chưa có thông tin'}
+            </Text>
             <Text style={{ fontSize: 15, margin: 5 }}>{item.name}</Text>
           </View>
         </View>
@@ -235,7 +237,7 @@ const seclect = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 10,
     justifyContent: 'space-between',
-    height: '20%',
+    height: 40,
   },
   textMain: {
     flex: 2,

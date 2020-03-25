@@ -16,11 +16,9 @@ import ImagePicker from 'react-native-image-picker';
 import LinearGradient from 'react-native-linear-gradient';
 
 import Actionaccount from '../../action/action';
-import pickAndUpload, {
-  uploadImage,
-  pickImageFromDevice,
-} from '../../api/upload';
+import { uploadImage } from '../../api/upload';
 import { updateProfile } from '../../api/updateProfile';
+import avatar from '../../asset/ava.png';
 
 const options = {
   title: 'Select Image',
@@ -45,8 +43,11 @@ class UpdateProfile extends Component {
         loading: true,
       });
       if (response.didCancel) {
+        this.setState({ loading: false });
       } else if (response.error) {
+        this.setState({ loading: false });
       } else if (response.customButton) {
+        this.setState({ loading: false });
       } else {
         const source = { uri: response.uri };
 
@@ -59,31 +60,6 @@ class UpdateProfile extends Component {
     });
   };
 
-  // upLoadImage = async () => {
-  //   try {
-  //     this.setState({ loading: true });
-
-  //     const source = await pickImageFromDevice();
-  //   } catch (error) {
-  //     console.log(error);
-  //     this.setState({ loading: false });
-  //   }
-
-  //   this.setState({
-  //     avatar: { uri: 'data:image/jpeg;base64,' + source.data },
-  //     loading: false,
-  //   });
-  // };
-
-  // avatar = () => {
-  //   if (this.state.loading == true) {
-  //     return <ActivityIndicator size="large" />;
-  //   }
-  //   return (
-
-  //   );
-  // };
-
   message = () => {
     Alert.alert('Vui lòng nhập đủ thông tin');
   };
@@ -94,7 +70,7 @@ class UpdateProfile extends Component {
       return (
         <LinearGradient
           colors={['#ede06f', '#d1ca8c']}
-          style={{ borderRadius: 10, margin: 20, borderBottomWidth: 2 }}>
+          style={{ borderRadius: 10, margin: '10%', borderBottomWidth: 2 }}>
           <TouchableOpacity onPress={this.getDone}>
             <Text style={[style.text, { margin: 10 }]}>Hoàn thành</Text>
           </TouchableOpacity>
@@ -104,7 +80,7 @@ class UpdateProfile extends Component {
       return (
         <LinearGradient
           colors={['#f5f2dc', '#faf8ed']}
-          style={{ borderRadius: 10, margin: 20, borderBottomWidth: 2 }}>
+          style={{ borderRadius: 10, margin: '10%', borderBottomWidth: 2 }}>
           <TouchableOpacity onPress={this.message}>
             <Text style={[style.text, { margin: 10 }]}>Hoàn thành</Text>
           </TouchableOpacity>
@@ -138,6 +114,24 @@ class UpdateProfile extends Component {
     }
   };
 
+  getAvatar = () => {
+    if (this.state.avatarSource != '')
+      return (
+        <Image
+          source={this.state.avatarSource}
+          style={{ flex: 1, borderRadius: 20 }}
+        />
+      );
+    return (
+      <View style={{ justifyContent: 'center', alignContent: 'center' }}>
+        <Image source={avatar} style={{ width: 100, height: 100 }} />
+        <Text style={{ fontSize: 20, color: 'white', margin: 10 }}>
+          chọn ảnh
+        </Text>
+      </View>
+    );
+  };
+
   render() {
     return (
       <LinearGradient
@@ -146,31 +140,24 @@ class UpdateProfile extends Component {
         <Text style={style.textMain}>Cập nhật thông tin tài khoản</Text>
 
         {this.state.loading ? <ActivityIndicator size="large" /> : null}
-        <View
+
+        <TouchableOpacity
+          onPress={this.picker}
           style={{
             width: '40%',
             height: '20%',
             borderRadius: 20,
             borderWidth: 1,
             justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#e0e0e0',
           }}>
-          <Image
-            source={this.state.avatarSource}
-            style={{ flex: 1, borderRadius: 20 }}
-          />
-        </View>
-        <LinearGradient
-          colors={['#48a1e8', '#66b1ed']}
-          style={{ borderRadius: 10, margin: 20 }}>
-          <TouchableOpacity onPress={this.picker}>
-            <Text style={[style.text, { margin: 10 }]}>Chọn ảnh đại diện</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+          {this.getAvatar()}
+        </TouchableOpacity>
 
         <View style={style.box}>
           <Text style={style.text}>Tên:</Text>
           <TextInput
-            placeholder="........................................................"
             style={style.textInput}
             onChangeText={text => this.setState({ name: text })}
             value={this.state.name}
@@ -179,7 +166,6 @@ class UpdateProfile extends Component {
         <View style={style.box}>
           <Text style={style.text}>Số điện thoại:</Text>
           <TextInput
-            placeholder="........................................................"
             style={style.textInput}
             keyboardType="number-pad"
             onChangeText={text => this.setState({ phoneNumber: text })}
@@ -224,16 +210,24 @@ const style = StyleSheet.create({
     bottom: 50,
   },
   text: {
-    fontSize: 25,
+    fontSize: 20,
+    fontStyle: 'italic',
+    color: '#757575',
   },
   textInput: {
-    fontSize: 25,
+    fontSize: 20,
     paddingLeft: 10,
+    width: '80%',
   },
   box: {
     flexDirection: 'row',
     width: '80%',
     alignItems: 'center',
     margin: 20,
+    borderBottomWidth: 4,
+    borderBottomColor: '#eeeeee',
+    backgroundColor: '#c5dce6',
+    paddingHorizontal: 5,
+    borderRadius: 10,
   },
 });
