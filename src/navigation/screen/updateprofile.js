@@ -74,12 +74,15 @@ class UpdateProfile extends Component {
     const { name, avatarSource, phoneNumber, sex } = this.state;
     if (name !== '' && avatarSource !== '' && phoneNumber !== '' && sex != '') {
       return (
-        <TouchableOpacity
-          style={[style.buttom, { backgroundColor: '#207ec9' }]}>
-          <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
-            Hoàn thành
-          </Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            style={[style.buttom, { backgroundColor: '#207ec9' }]}
+            onPress={this.getDone}>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
+              Hoàn thành
+            </Text>
+          </TouchableOpacity>
+        </View>
       );
     } else
       return (
@@ -144,7 +147,7 @@ class UpdateProfile extends Component {
   };
 
   render() {
-    const buttons = ['Giới tính','Nam', 'Nữ'];
+    const buttons = ['Giới tính', 'Nam', 'Nữ'];
     const { name, phoneNumber, birthday, sex } = this.state;
     return (
       <LinearGradient
@@ -153,6 +156,7 @@ class UpdateProfile extends Component {
         <View style={{ backgroundColor: 100, flex: 1 }}>
           <View style={style.boxAvatar}>
             {this.getAvatar()}
+
             {this.state.loading ? <ActivityIndicator size="large" /> : null}
 
             {this.buttomDone()}
@@ -258,13 +262,12 @@ const style = StyleSheet.create({
   },
   buttom: {
     width: '80%',
-    height: '17%',
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#1d598a',
     marginTop: '8%',
     borderRadius: 30,
-   
   },
 });
