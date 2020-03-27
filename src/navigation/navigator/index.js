@@ -16,7 +16,7 @@ export default class Mystack extends React.Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="UpdateProfile">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
             component={Login}

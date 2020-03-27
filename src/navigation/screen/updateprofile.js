@@ -10,10 +10,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
-
 import ImagePicker from 'react-native-image-picker';
-
 import LinearGradient from 'react-native-linear-gradient';
+import { Avatar, Input, ButtonGroup } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+Icon.loadFont();
 
 import Actionaccount from '../../action/action';
 import { uploadImage } from '../../api/upload';
@@ -35,6 +36,8 @@ class UpdateProfile extends Component {
     phoneNumber: '',
     loading: false,
     response: '',
+    birthday: '',
+    sex: '',
   };
 
   picker = () => {
@@ -61,30 +64,30 @@ class UpdateProfile extends Component {
   };
 
   message = () => {
-    Alert.alert('Vui lòng nhập đủ thông tin');
+    Alert.alert(
+      'Vui lòng nhập đủ thông tin',
+      'Nhấn vào biểu tượng avatar để chọn ảnh và nhập đủ thông tin trên màn hình.',
+    );
   };
 
-  done = () => {
-    const { name, avatarSource, phoneNumber } = this.state;
-    if (name !== '' && avatarSource !== '' && phoneNumber !== '') {
+  buttomDone = () => {
+    const { name, avatarSource, phoneNumber, sex } = this.state;
+    if (name !== '' && avatarSource !== '' && phoneNumber !== '' && sex != '') {
       return (
-        <LinearGradient
-          colors={['#ede06f', '#d1ca8c']}
-          style={{ borderRadius: 10, margin: '10%', borderBottomWidth: 2 }}>
-          <TouchableOpacity onPress={this.getDone}>
-            <Text style={[style.text, { margin: 10 }]}>Hoàn thành</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+        <TouchableOpacity
+          style={[style.buttom, { backgroundColor: '#207ec9' }]}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
+            Hoàn thành
+          </Text>
+        </TouchableOpacity>
       );
     } else
       return (
-        <LinearGradient
-          colors={['#f5f2dc', '#faf8ed']}
-          style={{ borderRadius: 10, margin: '10%', borderBottomWidth: 2 }}>
-          <TouchableOpacity onPress={this.message}>
-            <Text style={[style.text, { margin: 10 }]}>Hoàn thành</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+        <TouchableOpacity style={style.buttom} onPress={this.message}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
+            Hoàn thành
+          </Text>
+        </TouchableOpacity>
       );
   };
 
@@ -117,69 +120,89 @@ class UpdateProfile extends Component {
   getAvatar = () => {
     if (this.state.avatarSource != '')
       return (
-        <Image
-          source={this.state.avatarSource}
-          style={{ flex: 1, borderRadius: 20 }}
-        />
+        <TouchableOpacity onPress={this.picker}>
+          <Avatar
+            rounded
+            source={this.state.avatarSource}
+            size="xlarge"
+            activeOpacity={0.7}
+            icon={{ name: 'user', type: 'font-awesome' }}
+          />
+        </TouchableOpacity>
       );
     return (
-      <View style={{ justifyContent: 'center', alignContent: 'center' }}>
-        <Image source={avatar} style={{ width: 100, height: 100 }} />
-        <Text style={{ fontSize: 20, color: 'white', margin: 10 }}>
-          chọn ảnh
-        </Text>
-      </View>
+      <TouchableOpacity onPress={this.picker}>
+        <Avatar
+          rounded
+          source={avatar}
+          size="xlarge"
+          activeOpacity={0.7}
+          icon={{ name: 'user', type: 'font-awesome' }}
+        />
+      </TouchableOpacity>
     );
   };
 
   render() {
+    const buttons = ['Giới tính','Nam', 'Nữ'];
+    const { name, phoneNumber, birthday, sex } = this.state;
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
         style={style.contain}>
-        <Text style={style.textMain}>Cập nhật thông tin tài khoản</Text>
+        <View style={{ backgroundColor: 100, flex: 1 }}>
+          <View style={style.boxAvatar}>
+            {this.getAvatar()}
+            {this.state.loading ? <ActivityIndicator size="large" /> : null}
 
-        {this.state.loading ? <ActivityIndicator size="large" /> : null}
+            {this.buttomDone()}
+          </View>
 
-        <TouchableOpacity
-          onPress={this.picker}
-          style={{
-            width: '40%',
-            height: '20%',
-            borderRadius: 20,
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#e0e0e0',
-          }}>
-          {this.getAvatar()}
-        </TouchableOpacity>
+          <View style={style.boxInput}>
+            <Input
+              containerStyle={style.input}
+              placeholder="Tên:"
+              onChangeText={text => this.setState({ name: text })}
+              value={name}
+              inputContainerStyle={{
+                borderColor: '#e0e0e0',
+                borderBottomWidth: 3,
+              }}
+              inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
+            />
+            <Input
+              containerStyle={style.input}
+              placeholder="Ngày sinh:"
+              onChangeText={text => this.setState({ birthday: text })}
+              value={birthday}
+              keyboardType="number-pad"
+              inputContainerStyle={{
+                borderColor: '#e0e0e0',
+                borderBottomWidth: 3,
+              }}
+              inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
+            />
+            <Input
+              containerStyle={style.input}
+              placeholder="Số điện thoại:"
+              onChangeText={text => this.setState({ phoneNumber: text })}
+              value={phoneNumber}
+              keyboardType="number-pad"
+              inputContainerStyle={{
+                borderColor: '#e0e0e0',
+                borderBottomWidth: 3,
+              }}
+              inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
+            />
 
-        <View style={style.box}>
-          <Text style={style.text}>Tên:</Text>
-          <TextInput
-            style={style.textInput}
-            onChangeText={text => this.setState({ name: text })}
-            value={this.state.name}
-          />
-        </View>
-        <View style={style.box}>
-          <Text style={style.text}>Số điện thoại:</Text>
-          <TextInput
-            style={style.textInput}
-            keyboardType="number-pad"
-            onChangeText={text => this.setState({ phoneNumber: text })}
-            value={this.state.phoneNumber}
-          />
-        </View>
-
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 20,
-          }}>
-          {this.done()}
+            <ButtonGroup
+              onPress={sex => this.setState({ sex })}
+              selectedIndex={sex}
+              buttons={buttons}
+              containerStyle={[style.input, { backgroundColor: '#616161' }]}
+              textStyle={{ fontSize: 25, color: 'white' }}
+            />
+          </View>
         </View>
       </LinearGradient>
     );
@@ -200,34 +223,48 @@ const style = StyleSheet.create({
   contain: {
     // backgroundColor: '#90caf9',
     flex: 1,
+  },
+  boxAvatar: {
+    backgroundColor: 50,
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomEndRadius: 50,
+    borderBottomStartRadius: 50,
+    marginHorizontal: '2%',
+  },
+  boxInput: {
+    backgroundColor: '#616161',
+    flex: 3,
+    borderTopRightRadius: 50,
+    borderTopLeftRadius: 50,
+    marginTop: '7%',
+    marginHorizontal: '2%',
+    opacity: 0.8,
+  },
+  boxButtom: {
+    backgroundColor: 50,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textMain: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'white',
-    bottom: 50,
-  },
   text: {
-    fontSize: 20,
+    fontSize: 22,
     fontStyle: 'italic',
-    color: '#757575',
   },
-  textInput: {
-    fontSize: 20,
-    paddingLeft: 10,
-    width: '80%',
+  input: {
+    height: '15%',
+    marginTop: '8%',
   },
-  box: {
-    flexDirection: 'row',
+  buttom: {
     width: '80%',
+    height: '17%',
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
-    borderBottomWidth: 4,
-    borderBottomColor: '#eeeeee',
-    backgroundColor: '#c5dce6',
-    paddingHorizontal: 5,
-    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#1d598a',
+    marginTop: '8%',
+    borderRadius: 30,
+   
   },
 });

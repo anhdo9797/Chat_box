@@ -18,6 +18,7 @@ import {
   offMesssageUpdated,
 } from '../../api/chat';
 import { menuR } from '../../components/menu';
+import header from '../../components/header';
 
 class ChatBox extends Component {
   state = {
@@ -61,39 +62,18 @@ class ChatBox extends Component {
 
   render() {
     const { uid } = this.props.user;
-    const { menu } = this.state;
+
     const { avatar, displayName } = this.props.profile;
 
     return (
       <View style={seclect.main}>
-        <View style={seclect.box1}>
-          <Image
-            source={{ uri: this.props.route.params.avatar }}
-            style={{
-              width: '15%',
-              height: '60%',
-              margin: 10,
-              borderRadius: 50,
-            }}
-          />
-          <View>
-            <Text style={seclect.textButtom}>
-              {this.props.route.params.displayName}
-            </Text>
-            <Text style={seclect.text}>{this.props.route.params.name}</Text>
-          </View>
-
-          <TouchableOpacity
-            style={{ marginLeft: '30%', marginTop: '6%' }}
-            onPress={() => this.setState({ menu: !menu })}>
-            <Image
-              source={require('../../asset/menu.png')}
-              style={{ width: 20, height: 30 }}
-            />
-          </TouchableOpacity>
-        </View>
-        {menu ? menuR(this.props.navigation) : null}
-        <View style={{ flex: 6 }}>
+        <View></View>
+        {header.chatBox(
+          this.props.route.params.avatar,
+          this.props.route.params.displayName,
+          this.props.navigation,
+        )}
+        <View style={{ flex: 1 }}>
           <GiftedChat
             messages={this.state.messenger}
             onSend={this.sendMessages}
@@ -138,7 +118,7 @@ const seclect = StyleSheet.create({
 
   main: {
     flex: 1,
-    backgroundColor: '#a1887f',
+
   },
   textButtom: {
     fontSize: 20,

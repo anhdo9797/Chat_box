@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Dimensions,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -18,6 +19,10 @@ import { addFriend } from '../../api/AddFriend';
 import { getListFriend, off } from '../../api/Listfriend';
 import { checkProfile } from '../../api/updateProfile';
 import { menuR } from '../../components/menu';
+import renderItem from '../../components/listfirend';
+import header from '../../components/header';
+import { Icon, SearchBar } from 'react-native-elements';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
 const DATA = [{ displayName: 'anhdo', name: 'andho@gmail' }];
 
@@ -29,6 +34,8 @@ class ListFriend extends Component {
     data: [],
     avatar: '',
     menu: false,
+
+    index: 0,
   };
 
   componentDidMount() {
@@ -71,110 +78,161 @@ class ListFriend extends Component {
     this.setState({ avatar: getProfile.avatar });
   };
 
-  renderItem = ({ item, index }) => (
-    <LinearGradient
-      colors={['#e0e0e0', '#eceff1', '#c2c4c4']}
-      style={seclect.item}>
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('Chatbox', {
-            name: item.name,
-            item,
-            displayName: item.displayName,
-            avatar: item.avatar,
-          })
-        }>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <View>
-            <Image
-              source={{ uri: item.avatar || '' }}
-              style={{ width: 50, height: 50, margin: 5, borderRadius: 25 }}
-            />
-          </View>
-          <View>
-            <Text style={{ fontSize: 20, margin: 5 }}>
-              {item.displayName || 'chưa có thông tin'}
-            </Text>
-            <Text style={{ fontSize: 15, margin: 5 }}>{item.name}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </LinearGradient>
-  );
-
-  loadingAvatar = () => {
-    if (this.state.avatar == '') {
-      return <ActivityIndicator size="large" />;
-    } else {
+  iconSearch = search => {
+    if (search != '') {
       return (
-        <Image
-          source={{ uri: this.state.avatar }}
-          style={{
-            flex: 1,
-            borderRadius: 10,
-          }}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <Icon
+            reverse
+            reverseColor="black"
+            name="clear"
+            color="#e0e0e0"
+            onPress={() => this.setState({ search: '' })}
+            size={15}
+          />
+        </View>
+      );
+    }
+    return (
+      <Icon
+        reverse
+        reverseColor="black"
+        name="search"
+        color="#e0e0e0"
+        onPress={() => console.log('hello')}
+        size={15}
+      />
+    );
+  };
+
+  iconAdd = search => {
+    if (search != '') {
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <Icon
+            reverse
+            reverseColor="black"
+            name="user-plus"
+            type="font-awesome"
+            color="#e0e0e0"
+            onPress={this.getSearch}
+            size={15}
+          />
+        </View>
       );
     }
   };
 
-  render() {
-    const { search, loading, data } = this.state;
-    const { displayName, phoneNumber } = this.props.profile;
+  FirstRoute = () => {
+    return (
+      <FlatList
+        data={this.state.data}
+        extraData={this.state.data}
+        keyExtractor={(item, index) => item.key}
+        renderItem={({ item }) => renderItem({ item }, this.props.navigation)}
+      />
+    );
+  };
 
+  SecondRoute = () => {
+    const { displayName, phoneNumber } = this.props.profile;
+    return (
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View style={{ flex: 5 }}>
+          <Text style={{ fontSize: 40, marginBottom: '2%' }}>
+            Tên: {displayName}
+          </Text>
+          <Text style={{ fontSize: 40 }}>Tên: {phoneNumber}</Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={seclect.buttom}
+            onPress={() =>  this.props.navigation.navigate('UpdateProfile')}>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
+              Cập nhật thông tin
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  _renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'first':
+        return this.FirstRoute();
+      case 'second':
+        return this.SecondRoute();
+      default:
+        return null;
+    }
+  };
+
+  _setItem = (index: number) =>
+    this.setState({
+      index,
+    });
+
+  render() {
+    const { search, loading, data, avatar, index } = this.state;
+
+    // const routes = [
+    //   { key: 'first', title: 'First' },
+    //   { key: 'second', title: 'Second' },
+    // ];
+
+    const navigationState = {
+      index,
+      routes: [
+        { key: 'first', title: 'Bạn bè' },
+        { key: 'second', title: 'Thông tin cá nhân' },
+      ],
+    };
+
+    const initialLayout = {
+      height: 0,
+      width: Dimensions.get('window').width,
+    };
     return (
       <View style={seclect.main}>
         <View style={seclect.box1}>
-          <View style={seclect.textMain}>
-            <View
-              style={{
-                width: '25%',
-                height: '65%',
-                margin: 4,
-                borderRadius: 10,
-              }}>
-              {this.loadingAvatar()}
-            </View>
-
-            <View style={{ flex: 1 }}>
-              <Text style={seclect.textButtom}>{displayName}</Text>
-              <Text style={seclect.textSmall}>{phoneNumber}</Text>
-              <Text style={seclect.textSmall}>{this.props.user.email}</Text>
-            </View>
-            <TouchableOpacity
-              style={{ marginRight: '5%', marginTop: '2%' }}
-              onPress={() => this.setState({ menu: !this.state.menu })}>
-              <Image
-                source={require('../../asset/menu.png')}
-                style={{ width: 20, height: 30 }}
+          {header.listfriendHeader(avatar, 'Chat', this.props.navigation)}
+          <View
+            style={{
+              width: '100%',
+              height: '60%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={seclect.text}>Thêm bạn</Text>
+            <View style={seclect.input}>
+              {this.iconSearch(search)}
+              <TextInput
+                placeholder="Bạn muốn mua gì?"
+                onChangeText={search => this.setState({ search })}
+                style={{ width: '72%' }}
+                value={search}
               />
-            </TouchableOpacity>
-          </View>
-
-          <View style={seclect.input}>
-            <TextInput
-              style={{ width: '80%' }}
-              placeholder="Nhập tên bạn muốn thêm"
-              onChangeText={text => this.setState({ search: text })}
-              value={search}
-            />
-
-            <TouchableOpacity onPress={this.getSearch}>
-              <Text style={seclect.text}>Thêm</Text>
-            </TouchableOpacity>
+              {this.iconAdd(search)}
+            </View>
           </View>
         </View>
 
         <LinearGradient
-          colors={['#e0e0e0', '#eeeeee', '#636161']}
+          colors={['#e0e0e0', '#eeeeee']}
           style={seclect.box2}>
           {loading ? <ActivityIndicator size="large" /> : null}
-          {this.state.menu ? menuR(this.props.navigation) : null}
-          <FlatList
-            data={data}
-            extraData={{ data }}
-            keyExtractor={(item, index) => item.key}
-            renderItem={this.renderItem}
+
+          <TabView
+            navigationState={navigationState}
+            renderScene={this._renderScene}
+            onIndexChange={this._setItem}
+            initialLayout={initialLayout}
           />
         </LinearGradient>
       </View>
@@ -199,15 +257,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(ListFriend);
 
 const seclect = StyleSheet.create({
   box1: {
-    flex: 1,
-    backgroundColor: '#757575',
-    borderBottomWidth: 4,
-    borderBottomColor: '#a1887f',
-    borderBottomEndRadius: 70,
-    borderTopColor: 'red',
+    flex: 3,
+    backgroundColor: '#42a5f5',
   },
   box2: {
-    flex: 3,
+    flex: 8,
     backgroundColor: 'blue',
     borderRadius: 10,
   },
@@ -216,44 +270,20 @@ const seclect = StyleSheet.create({
     flex: 1,
     backgroundColor: '#a1887f',
   },
-  textButtom: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-    marginStart: 20,
-  },
-  textSmall: {
-    fontSize: 15,
-    color: '#e0f7fa',
-    marginStart: 20,
-  },
+
   input: {
     width: '90%',
-
+    height: 45,
+    flexDirection: 'row',
+    backgroundColor: '#eeeeee',
     alignItems: 'center',
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    bottom: 10,
-    marginHorizontal: 5,
     borderRadius: 10,
-    justifyContent: 'space-between',
-    height: 40,
   },
-  textMain: {
-    flex: 2,
-    top: 30,
-    flexDirection: 'row',
-  },
-  image: {
-    width: 20,
-    height: 20,
-    marginHorizontal: 30,
-  },
+
   text: {
-    fontSize: 25,
-    backgroundColor: 150,
-    padding: 4,
-    borderRadius: 10,
+    fontSize: 30,
+    color: 'white',
+    fontWeight: 'bold',
   },
   item: {
     padding: 10,
@@ -262,5 +292,16 @@ const seclect = StyleSheet.create({
     borderRadius: 10,
     borderBottomColor: '#8a8a8a',
     borderBottomWidth: 4,
+  },
+  boxButtom: {
+    flex: 1,
+  },
+  buttom: {
+    width: '90%',
+    height: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: '#207ec9',
   },
 });
