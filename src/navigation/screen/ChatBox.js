@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { GiftedChat } from 'react-native-gifted-chat';
 
@@ -17,7 +10,6 @@ import {
   onMesssageUpdated,
   offMesssageUpdated,
 } from '../../api/chat';
-import { menuR } from '../../components/menu';
 import header from '../../components/header';
 
 class ChatBox extends Component {
@@ -34,6 +26,7 @@ class ChatBox extends Component {
   }
 
   getChatRoom = async () => {
+    //vào cái room đã được tạo, có user và friend
     const { uid } = this.props.user;
     const uidFriend = await getUIDfriend(this.state.friend);
     this.setState({ uidFriend });
@@ -49,6 +42,7 @@ class ChatBox extends Component {
   };
 
   getNameRoom = uidFriend => {
+    /*Tạo tên của room chat với cú pháp (uid nhỏ)_(uid lớn) */
     const { uid } = this.props.user;
     if (uidFriend > uid) {
       return uid + '_' + uidFriend;
@@ -88,6 +82,12 @@ class ChatBox extends Component {
     );
   }
 
+  /*
+  Thư viện GiftedChat cần tạo cái user người gửi để phân biệt với
+  người nhận user truyền vào cần có 1 số thuộc tính để phân biệt giữa
+  user này với user kia 
+  */
+
   componentWillUnmount() {
     offMesssageUpdated(this.getNameRoom(this.state.uidFriend));
   }
@@ -118,7 +118,6 @@ const seclect = StyleSheet.create({
 
   main: {
     flex: 1,
-
   },
   textButtom: {
     fontSize: 20,
@@ -132,9 +131,9 @@ const seclect = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     bottom: 10,
-    // marginRight: 40,
+
     marginHorizontal: 5,
-    // borderBottomEndRadius: 70,
+
     borderRadius: 10,
     justifyContent: 'space-between',
   },

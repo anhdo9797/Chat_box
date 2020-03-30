@@ -3,9 +3,7 @@ import {
   TouchableOpacity,
   View,
   Text,
-  TextInput,
   StyleSheet,
-  Image,
   Alert,
   ActivityIndicator,
 } from 'react-native';
@@ -20,6 +18,7 @@ import Actionaccount from '../../action/action';
 import { uploadImage } from '../../api/upload';
 import { updateProfile } from '../../api/updateProfile';
 import avatar from '../../asset/ava.png';
+import dateComponenst from '../../components/date';
 
 const options = {
   title: 'Select Image',
@@ -39,6 +38,19 @@ class UpdateProfile extends Component {
     birthday: '',
     sex: '',
   };
+
+  componentDidMount() {
+    var today = new Date();
+
+    var birthday =
+      today.getDate() +
+      '-' +
+      (today.getMonth() + 1) +
+      '-' +
+      today.getFullYear();
+
+    this.setState({ birthday });
+  }
 
   picker = () => {
     ImagePicker.showImagePicker(options, response => {
@@ -74,20 +86,18 @@ class UpdateProfile extends Component {
     const { name, avatarSource, phoneNumber, sex } = this.state;
     if (name !== '' && avatarSource !== '' && phoneNumber !== '' && sex != '') {
       return (
-        <View>
-          <TouchableOpacity
-            style={[style.buttom, { backgroundColor: '#207ec9' }]}
-            onPress={this.getDone}>
-            <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
-              Hoàn thành
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[style.buttom, { backgroundColor: '#207ec9' }]}
+          onPress={this.getDone}>
+          <Text style={{ fontSize: 28, fontWeight: 'bold', color: 'white' }}>
+            Hoàn thành
+          </Text>
+        </TouchableOpacity>
       );
     } else
       return (
         <TouchableOpacity style={style.buttom} onPress={this.message}>
-          <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
+          <Text style={{ fontSize: 28, fontWeight: 'bold', color: 'white' }}>
             Hoàn thành
           </Text>
         </TouchableOpacity>
@@ -149,6 +159,7 @@ class UpdateProfile extends Component {
   render() {
     const buttons = ['Giới tính', 'Nam', 'Nữ'];
     const { name, phoneNumber, birthday, sex } = this.state;
+
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
@@ -174,18 +185,7 @@ class UpdateProfile extends Component {
               }}
               inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
             />
-            <Input
-              containerStyle={style.input}
-              placeholder="Ngày sinh:"
-              onChangeText={text => this.setState({ birthday: text })}
-              value={birthday}
-              keyboardType="number-pad"
-              inputContainerStyle={{
-                borderColor: '#e0e0e0',
-                borderBottomWidth: 3,
-              }}
-              inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
-            />
+
             <Input
               containerStyle={style.input}
               placeholder="Số điện thoại:"
@@ -198,7 +198,16 @@ class UpdateProfile extends Component {
               }}
               inputStyle={{ fontSize: 23, fontStyle: 'italic', color: 'white' }}
             />
+            <View style={[style.input,{flexDirection: 'row' }]}>
+            <Text style={{fontSize: 25, color: 'white',marginLeft: '2%'}}>Ngày sinh:  </Text>
+              {dateComponenst(birthday, date => {
+                this.setState({
+                  birthday: date,
+                });
+              })}
+            </View>
 
+           
             <ButtonGroup
               onPress={sex => this.setState({ sex })}
               selectedIndex={sex}
@@ -262,7 +271,7 @@ const style = StyleSheet.create({
   },
   buttom: {
     width: '80%',
-    height: 55,
+    height: '17%',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,

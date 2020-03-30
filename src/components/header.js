@@ -48,6 +48,7 @@ const logOut = navigation => {
 };
 
 export const listfriendHeader = (avatar, name, navigation) => {
+  // Header của screen Lisfriend
   return (
     <Header
       ViewComponent={LinearGradient}
@@ -80,6 +81,7 @@ export const listfriendHeader = (avatar, name, navigation) => {
 };
 
 export const chatBox = (avatar, name, navigation) => {
+  // Header của screen ChatBox
   return (
     <Header
       ViewComponent={LinearGradient}

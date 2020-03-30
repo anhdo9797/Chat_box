@@ -8,7 +8,6 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
-  Image,
   Dimensions,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -18,11 +17,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import { addFriend } from '../../api/AddFriend';
 import { getListFriend, off } from '../../api/Listfriend';
 import { checkProfile } from '../../api/updateProfile';
-import { menuR } from '../../components/menu';
 import renderItem from '../../components/listfirend';
 import header from '../../components/header';
-import { Icon, SearchBar } from 'react-native-elements';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, TabBar } from 'react-native-tab-view';
+import { Icon } from 'react-native-elements';
 
 const DATA = [{ displayName: 'anhdo', name: 'andho@gmail' }];
 
@@ -142,7 +140,7 @@ class ListFriend extends Component {
           <Text style={{ fontSize: 40, marginBottom: '2%' }}>
             Tên: {displayName}
           </Text>
-          <Text style={{ fontSize: 40 }}>Tên: {phoneNumber}</Text>
+          <Text style={{ fontSize: 40 }}>Số điện thoại: {phoneNumber}</Text>
         </View>
         <View
           style={{
@@ -152,7 +150,7 @@ class ListFriend extends Component {
           }}>
           <TouchableOpacity
             style={seclect.buttom}
-            onPress={() =>  this.props.navigation.navigate('UpdateProfile')}>
+            onPress={() => this.props.navigation.navigate('UpdateProfile')}>
             <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
               Cập nhật thông tin
             </Text>
@@ -223,9 +221,7 @@ class ListFriend extends Component {
           </View>
         </View>
 
-        <LinearGradient
-          colors={['#e0e0e0', '#eeeeee']}
-          style={seclect.box2}>
+        <LinearGradient colors={['#e0e0e0', '#eeeeee']} style={seclect.box2}>
           {loading ? <ActivityIndicator size="large" /> : null}
 
           <TabView
@@ -233,6 +229,7 @@ class ListFriend extends Component {
             renderScene={this._renderScene}
             onIndexChange={this._setItem}
             initialLayout={initialLayout}
+            tabBarPosition="bottom"
           />
         </LinearGradient>
       </View>

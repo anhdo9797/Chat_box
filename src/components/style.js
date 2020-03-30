@@ -1,1 +1,0 @@
-const grandBackgroundColor = this.A

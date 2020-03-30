@@ -8,7 +8,6 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-  ActivityIndicatorBase,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -18,8 +17,7 @@ import google from '../../asset/google.png';
 import twitter from '../../asset/twitter.png';
 import Actionaccount from '../../action/action';
 import { login } from '../../api/Users';
-import { checkProfile, getProFile } from '../../api/updateProfile';
-
+import { checkProfile } from '../../api/updateProfile';
 
 class Login extends Component {
   static hiddenLogin = {
@@ -28,14 +26,17 @@ class Login extends Component {
 
   state = {
     loading: false,
+
+    password: '',
   };
 
   componentDidMount() {
-    this.setState({
-      email: this.props.route.params?.name,
-      password: '',
-    });
+    if (this.props.route.params?.name) {
+      this.setState({ email: this.props.route.params?.name });
+      console.log('Didmount',this.state.email);
+    }
   }
+
 
   getLogin = async () => {
     const { email, password } = this.state;
@@ -80,7 +81,7 @@ class Login extends Component {
 
   render() {
     const { email, password, loading } = this.state;
-
+    
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}

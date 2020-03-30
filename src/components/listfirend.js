@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 
 import { ListItem } from 'react-native-elements';
-import { TouchableOpacity,Text } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
+
+// ListFriend của user
 
 const renderItem = ({ item }, navigation) => (
   <TouchableOpacity

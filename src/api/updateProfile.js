@@ -3,9 +3,8 @@ import database from '@react-native-firebase/database';
 
 export async function updateProfile(uid, displayName, avatar, phoneNumber) {
   try {
-
     const ref = database().ref(`/users/${uid}/profile`);
-    await ref.set({ displayName, avatar, phoneNumber });
+    await ref.set({ displayName, avatar, phoneNumber, sex });
   } catch (e) {
     console.log(e);
     throw e;
