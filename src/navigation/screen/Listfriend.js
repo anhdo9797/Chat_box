@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   FlatList,
   Dimensions,
+  Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -32,13 +33,26 @@ class ListFriend extends Component {
     data: [],
     avatar: '',
     menu: false,
+    userFacebooks: '',
+    images: '',
 
     index: 0,
   };
 
   componentDidMount() {
     this.getData();
+    this.getImage();
   }
+
+  getImage = () => {
+    if (this.props.route.params) {
+      const url = this.props.route.params.userFacebook.avatartURL;
+      fetch(url).then(res => {
+        this.setState({ images: res.url });
+      });
+    }
+    return null;
+  };
 
   getSearch = async () => {
     const { user } = this.props;
@@ -46,7 +60,6 @@ class ListFriend extends Component {
     console.log(user);
     this.setState({ loading: true });
     const { uid } = this.props.user;
-
     try {
       await addFriend(uid, search);
       Alert.alert('thêm thành công');
@@ -74,6 +87,10 @@ class ListFriend extends Component {
     this.props.takeProfile({ profile: getProfile });
 
     this.setState({ avatar: getProfile.avatar });
+
+    console.log('=============avatartURL==========');
+    console.log(this.props.route.params.userFacebook.avatartURL);
+    console.log('====================================');
   };
 
   iconSearch = search => {
@@ -133,7 +150,12 @@ class ListFriend extends Component {
   };
 
   SecondRoute = () => {
-    const { displayName, phoneNumber } = this.props.profile;
+    const { displayName, phoneNumber } = this.props.route.params
+      ? this.props.route.params.userFacebook
+      : this.props.profile;
+    // this.state.userFacebooks != ''
+    //   ? this.state.userFacebooks
+    //   : this.props.profile;
     return (
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View style={{ flex: 5 }}>
@@ -177,7 +199,7 @@ class ListFriend extends Component {
     });
 
   render() {
-    const { search, loading, data, avatar, index } = this.state;
+    const { search, loading, images, avatar, index } = this.state;
 
     // const routes = [
     //   { key: 'first', title: 'First' },
@@ -199,7 +221,11 @@ class ListFriend extends Component {
     return (
       <View style={seclect.main}>
         <View style={seclect.box1}>
-          {header.listfriendHeader(avatar, 'Chat', this.props.navigation)}
+          {header.listfriendHeader(
+            avatar ? avatar : images,
+            'Chat',
+            this.props.navigation,
+          )}
           <View
             style={{
               width: '100%',
@@ -208,14 +234,16 @@ class ListFriend extends Component {
               alignItems: 'center',
             }}>
             <Text style={seclect.text}>Thêm bạn</Text>
+
             <View style={seclect.input}>
               {this.iconSearch(search)}
               <TextInput
-                placeholder="Bạn muốn mua gì?"
+                placeholder="Nhập email bạn bè vào đây"
                 onChangeText={search => this.setState({ search })}
                 style={{ width: '72%' }}
                 value={search}
               />
+
               {this.iconAdd(search)}
             </View>
           </View>
@@ -250,7 +278,10 @@ const mapDispatchToProps = {
   takeProfile: Actionaccount.takeProfile,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListFriend);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ListFriend);
 
 const seclect = StyleSheet.create({
   box1: {

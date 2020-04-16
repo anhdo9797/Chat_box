@@ -9,12 +9,7 @@ const centerComponents = (avatar, name) => {
   return (
     <View style={{ flexDirection: 'row' }}>
       <View>
-        <Avatar
-          rounded
-          source={{ uri: avatar }}
-          size="medium"
-          activeOpacity={0.7}
-        />
+        <Avatar rounded source={{ uri: avatar }} size="medium" activeOpacity={0.7} />
 
         <Badge
           status="success"
@@ -99,7 +94,7 @@ export const chatBox = (avatar, name, navigation) => {
               source={{ uri: avatar }}
               size="medium"
               activeOpacity={0.7}
-              containerStyle={{ marginLeft: 20}}
+              containerStyle={{ marginLeft: 20 }}
             />
           </View>
         </View>
@@ -117,7 +112,13 @@ export const chatBox = (avatar, name, navigation) => {
       }
       rightComponent={
         <View style={{ flexDirection: 'row' }}>
-          <Icon name="video" type="foundation" color="#fff" size={25}  containerStyle={{ marginRight: 20}} />
+          <Icon
+            name="video"
+            type="foundation"
+            color="#fff"
+            size={25}
+            containerStyle={{ marginRight: 20 }}
+          />
           <Icon name="call" type="material" color="#fff" size={25} />
         </View>
       }

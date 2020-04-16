@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ChatBox</string>
+
+
+    <!-- <string name="facebook_app_id">Facebook App ID</string> -->
+    
+    <string name="facebook_app_id">156661202339323</string>
+    <!-- <string name="fb_login_protocol_scheme">fb1106519569701480</string> -->
+
 </resources>

@@ -18,6 +18,7 @@ import twitter from '../../asset/twitter.png';
 import Actionaccount from '../../action/action';
 import { login } from '../../api/Users';
 import { checkProfile } from '../../api/updateProfile';
+import moreLogin from '../../api/login';
 
 class Login extends Component {
   static hiddenLogin = {
@@ -33,10 +34,9 @@ class Login extends Component {
   componentDidMount() {
     if (this.props.route.params?.name) {
       this.setState({ email: this.props.route.params?.name });
-      console.log('Didmount',this.state.email);
+      console.log('Didmount', this.state.email);
     }
   }
-
 
   getLogin = async () => {
     const { email, password } = this.state;
@@ -48,7 +48,7 @@ class Login extends Component {
         this.setState({ loading: false });
         return Alert.alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
       } else {
-        const fetchedUser = await login(email, password);
+        let fetchedUser = await login(email, password);
 
         this.setState({ loading: false });
         this.props.takeUser({ user: fetchedUser });
@@ -79,9 +79,36 @@ class Login extends Component {
     }
   };
 
+  onPressfacebook = async () => {
+    try {
+      this.setState({ loading: true });
+
+      let fetchedUser = await moreLogin.LoginwithFacebooks();
+
+      this.props.takeUser({ user: fetchedUser });
+
+      Alert.alert('Thông báo', 'Đăng nhập thành công', [
+        {
+          text: 'OK',
+          onPress: () => {
+            this.props.navigation.navigate('Listfriend', {
+              userFacebook: fetchedUser,
+            });
+            this.setState({ loading: false });
+          },
+        },
+      ]);
+    } catch (error) {
+      console.log('==========onPressfacebook==========');
+      console.log(error);
+      console.log('====================================');
+      this.setState({ loading: false });
+    }
+  };
+
   render() {
     const { email, password, loading } = this.state;
-    
+
     return (
       <LinearGradient
         colors={['#42a5f5', '#b3e5fc', '#fff59d']}
@@ -107,9 +134,10 @@ class Login extends Component {
           />
         </View>
         <View style={style.box1}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.onPressfacebook}>
             <Image source={facebook} style={style.image} />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Image source={twitter} style={style.image} />
           </TouchableOpacity>
@@ -145,7 +173,10 @@ const mapDispatchToProps = {
   takeProfile: Actionaccount.takeProfile,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Login);
 
 const style = StyleSheet.create({
   contain: {
